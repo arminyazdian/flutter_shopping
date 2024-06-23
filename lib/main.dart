@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shopping/core/style/app_theme.dart';
+import 'package:flutter_shopping/dependency_injection/injection.dart';
 
 void main() {
   runApp(const MainApp());
+  configureDependencies();
 }
 
 class MainApp extends StatelessWidget {
@@ -9,10 +12,11 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
+      theme: inject<AppTheme>().appThemeLight(context),
       home: Scaffold(
         body: Center(
-          child: Text('Hello World!'),
+          child: Text('Hello world!'),
         ),
       ),
     );

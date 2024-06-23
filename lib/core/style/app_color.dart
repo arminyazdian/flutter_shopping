@@ -6,6 +6,7 @@ class AppColor {
   const AppColor({required this.light, required this.dark});
 }
 
+@lazySingleton
 class AppColorsBase {
   //Main
   AppColor get backgroundColor => const AppColor(light: Color(0xffFFFFFF), dark: Color(0xff272727));
