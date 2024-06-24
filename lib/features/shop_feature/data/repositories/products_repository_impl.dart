@@ -19,7 +19,7 @@ class ProductsRepositoryImpl implements ProductsRepository {
         ProductsEntity entity = ProductsModel.fromJson(response.data);
         return DataSuccess(entity);
       } else {
-        return const DataFail("دریافت اطلاعات با خطا مواجه شد.");
+        return const DataFail("دریافت کالا با خطا مواجه شد.");
       }
     } catch (e) {
       return const DataFail("عدم اتصال.");
