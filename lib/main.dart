@@ -14,7 +14,7 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: inject<AppTheme>().appThemeLight(context),
-      home: Scaffold(
+      home: const Scaffold(
         body: Center(
           child: Text('Hello world!'),
         ),
