@@ -10,8 +10,8 @@ class AppColor {
 class AppColorsBase {
   //Main
   AppColor get backgroundColor => const AppColor(light: Color(0xffFFFFFF), dark: Color(0xff272727));
-  AppColor get primary => const AppColor(light: Color(0xff14a5d4), dark: Color(0xff14a5d4));
-  AppColor get secondary => const AppColor(light: Color(0xff08bda5), dark: Color(0xff08bda5));
+  AppColor get primary => const AppColor(light: Color(0xff4e8bfd), dark: Color(0xff4e8bfd));
+  AppColor get secondary => const AppColor(light: Color(0xff2764d6), dark: Color(0xff2764d6));
 
   //Text
   AppColor get mainTextColor => const AppColor(light: Color(0xff2d2d2d), dark: Color(0xffd4d4d4));
