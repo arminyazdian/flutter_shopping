@@ -1,5 +1,7 @@
 abstract class DataState<T> {
-  const DataState(T? data, String? error);
+  final T? data;
+  final String? error;
+  const DataState(this.data, this.error);
 }
 
 class DataSuccess<T> extends DataState<T> {
