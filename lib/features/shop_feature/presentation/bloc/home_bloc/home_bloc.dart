@@ -5,10 +5,12 @@ import 'package:flutter_shopping/features/shop_feature/domain/usecases/banner_us
 import 'package:flutter_shopping/features/shop_feature/domain/usecases/products_usecase.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/banner_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/products_status.dart';
+import 'package:injectable/injectable.dart';
 
 part 'home_event.dart';
 part 'home_state.dart';
 
+@injectable
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ProductsUsecase productsUsecase;
   final BannerUsecase bannerUsecase;
