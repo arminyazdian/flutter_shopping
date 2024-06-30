@@ -28,6 +28,10 @@ class AppTheme {
         ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: appColors.primary.light),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: appColors.primary.light,
+        foregroundColor: appColors.backgroundColor.light,
+      ),
       textTheme: Theme.of(context).textTheme.copyWith(
             headlineMedium: context.headline4Bold,
             headlineSmall: context.headline5Bold,
@@ -60,6 +64,10 @@ class AppTheme {
         ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(color: appColors.primary.dark),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        backgroundColor: appColors.primary.dark,
+        foregroundColor: appColors.backgroundColor.dark,
+      ),
       textTheme: Theme.of(context).textTheme.copyWith(
             headlineMedium: context.headline4Bold,
             headlineSmall: context.headline5Bold,

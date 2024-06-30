@@ -3,7 +3,8 @@ import 'package:flutter_shopping/core/style/app_theme.dart';
 
 class HeaderRow extends StatelessWidget {
   final String titleText, buttonText;
-  const HeaderRow({super.key, required this.titleText, required this.buttonText});
+  final void Function() buttonPress;
+  const HeaderRow({super.key, required this.titleText, required this.buttonText, required this.buttonPress});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class HeaderRow extends StatelessWidget {
       children: [
         Text(titleText, style: context.body2Medium),
         TextButton(
-          onPressed: () {},
+          onPressed: buttonPress,
           child: Text(buttonText, style: context.body2Medium.copyWith(color: Theme.of(context).primaryColor)),
         ),
       ],

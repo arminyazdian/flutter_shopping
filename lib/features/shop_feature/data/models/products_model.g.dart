@@ -8,8 +8,8 @@ part of 'products_model.dart';
 
 ProductsModel _$ProductsModelFromJson(Map<String, dynamic> json) =>
     ProductsModel(
-      (json['items'] as List<dynamic>)
-          .map((e) => ProductsItems.fromJson(e as Map<String, dynamic>))
+      (json['items'] as List<dynamic>?)
+          ?.map((e) => ProductsItems.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 

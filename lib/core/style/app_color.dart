@@ -16,7 +16,7 @@ class AppColorsBase {
 
   //Text
   AppColor get mainTextColor => const AppColor(light: Color(0xff2d2d2d), dark: Color(0xffd4d4d4));
-  AppColor get subTextColor => const AppColor(light: Color(0xff505050), dark: Color(0xff606060));
+  AppColor get subTextColor => const AppColor(light: Color(0xff303030), dark: Color(0xff606060));
   AppColor get titleTextColor => const AppColor(light: Color(0xff232323), dark: Color(0xffe6e6e6));
   AppColor get inputTextColor => const AppColor(light: Color(0xff232323), dark: Color(0xffe6e6e6));
   AppColor get buttonTextColor => const AppColor(light: Color(0xffe6e6e6), dark: Color(0xff232323));

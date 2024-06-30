@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
 import 'package:flutter_shopping/core/presentation/widgets/network_image_progressbar_widget.dart';
-import 'package:flutter_shopping/core/presentation/widgets/vertical_medium_space.dart';
-import 'package:flutter_shopping/core/presentation/widgets/vertical_small_space_widget.dart';
+import 'package:flutter_shopping/core/presentation/widgets/medium_space.dart';
+import 'package:flutter_shopping/core/presentation/widgets/small_space_widget.dart';
 import 'package:flutter_shopping/core/style/app_theme.dart';
 
 class ProductsCard extends StatelessWidget {
@@ -28,6 +29,14 @@ class ProductsCard extends StatelessWidget {
                     fit: BoxFit.cover,
                     height: 200,
                     width: 150,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        height: 200,
+                        width: 150,
+                        color: Theme.of(context).colorScheme.items,
+                        child: const Center(child: Text("خطا در دریافت تصویر")),
+                      );
+                    },
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
                       return const NetworkImageProgressbar(height: 200, width: 150);
@@ -37,26 +46,26 @@ class ProductsCard extends StatelessWidget {
                 IconButton(
                   onPressed: () {},
                   icon: Icon(
-                    Icons.favorite_border_rounded,
+                    AssetsBase.favOutlineIcon,
                     size: 22,
                     color: Theme.of(context).primaryColor,
                   ),
                 ),
               ],
             ),
-            const VerticalSmallSpace(),
+            const SmallSpace(vertical: true),
             Text(
               productTitle,
               style: context.body2Bold,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const VerticalMediumSpace(),
+            const MediumSpace(vertical: true),
             SizedBox(
               width: 150,
               child: Text(
                 "$previousPrice تومان",
-                style: context.body4Medium.copyWith(decoration: TextDecoration.lineThrough),
+                style: context.body4Medium,
               ),
             ),
             SizedBox(
