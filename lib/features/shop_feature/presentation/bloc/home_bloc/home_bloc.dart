@@ -21,7 +21,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
     on<LoadProductsEvent>((event, emit) async {
       if (event.sort == 0) {
         emit(state.copyWith(newProductStatusSort0: ProductsLoading()));
-      } else if (event.sort == 1) {
+      } else {
         emit(state.copyWith(newProductStatusSort1: ProductsLoading()));
       }
       try {
@@ -29,21 +29,21 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         if (productsDataState is DataSuccess) {
           if (event.sort == 0) {
             emit(state.copyWith(newProductStatusSort0: ProductsSuccess(entity: productsDataState.data)));
-          } else if (event.sort == 1) {
+          } else {
             emit(state.copyWith(newProductStatusSort1: ProductsSuccess(entity: productsDataState.data)));
           }
         }
         if (productsDataState is DataFail) {
           if (event.sort == 0) {
             emit(state.copyWith(newProductStatusSort0: ProductsFail(error: productsDataState.error!)));
-          } else if (event.sort == 1) {
+          } else {
             emit(state.copyWith(newProductStatusSort1: ProductsFail(error: productsDataState.error!)));
           }
         }
       } catch (e) {
         if (event.sort == 0) {
           emit(state.copyWith(newProductStatusSort0: ProductsFail(error: e.toString())));
-        } else if (event.sort == 0) {
+        } else {
           emit(state.copyWith(newProductStatusSort1: ProductsFail(error: e.toString())));
         }
       }

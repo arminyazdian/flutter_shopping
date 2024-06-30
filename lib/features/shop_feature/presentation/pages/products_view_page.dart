@@ -40,12 +40,7 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
   @override
   void initState() {
     sort = widget.sort;
-    loadAll();
-    if (sort == 0) {
-      appbarTitle = "جدیدترین ها";
-    } else if (sort == 1) {
-      appbarTitle = "پربازدید ها";
-    }
+    changeSort(sort);
     super.initState();
   }
 
@@ -71,10 +66,38 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
                     const MediumSpace(vertical: true),
                     Text("مرتب سازی بر اساس", textAlign: TextAlign.center, style: context.body2Bold),
                     const BigSpace(vertical: true),
-                    const BottomSheetTile(title: "جدیدترین"),
-                    const BottomSheetTile(title: "پربازدیدترین"),
-                    const BottomSheetTile(title: "گرانترین"),
-                    const BottomSheetTile(title: "ارزانترین"),
+                    BottomSheetTile(
+                      title: "جدیدترین",
+                      onTap: () => setState(() {
+                        changeSort(0);
+                        Navigator.pop(context);
+                      }),
+                      sortState: sort == 0,
+                    ),
+                    BottomSheetTile(
+                      title: "پربازدیدترین",
+                      onTap: () => setState(() {
+                        changeSort(1);
+                        Navigator.pop(context);
+                      }),
+                      sortState: sort == 1,
+                    ),
+                    BottomSheetTile(
+                      title: "گرانترین",
+                      onTap: () => setState(() {
+                        changeSort(2);
+                        Navigator.pop(context);
+                      }),
+                      sortState: sort == 2,
+                    ),
+                    BottomSheetTile(
+                      title: "ارزانترین",
+                      onTap: () => setState(() {
+                        changeSort(3);
+                        Navigator.pop(context);
+                      }),
+                      sortState: sort == 3,
+                    ),
                   ],
                 ),
               );
@@ -85,10 +108,16 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
       ),
       body: BlocBuilder<HomeBloc, HomeState>(
         builder: (context, state) {
-          if ((state.productsStatusSort0 is ProductsLoading && sort == 0) || (state.productsStatusSort1 is ProductsLoading && sort == 1)) {
+          if ((state.productsStatusSort0 is ProductsLoading && sort == 0) ||
+              (state.productsStatusSort1 is ProductsLoading && sort == 1) ||
+              (state.productsStatusSort1 is ProductsLoading && sort == 2) ||
+              (state.productsStatusSort1 is ProductsLoading && sort == 3)) {
             return const Center(child: CircularProgressIndicator());
           }
-          if ((state.productsStatusSort0 is ProductsFail && sort == 0) || (state.productsStatusSort1 is ProductsFail && sort == 0)) {
+          if ((state.productsStatusSort0 is ProductsFail && sort == 0) ||
+              (state.productsStatusSort1 is ProductsFail && sort == 1) ||
+              (state.productsStatusSort1 is ProductsFail && sort == 2) ||
+              (state.productsStatusSort1 is ProductsFail && sort == 3)) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -105,14 +134,12 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
               ),
             );
           }
-          if ((state.productsStatusSort0 is ProductsSuccess && sort == 0) || (state.productsStatusSort1 is ProductsSuccess && sort == 1)) {
-            List<ProductsItems> productsItems = sort == 0
-                ? (state.productsStatusSort0 as ProductsSuccess).entity.items!
-                : sort == 1
-                    ? (state.productsStatusSort1 as ProductsSuccess).entity.items!
-                    : sort == 2
-                        ? (state.productsStatusSort0 as ProductsSuccess).entity.items!
-                        : (state.productsStatusSort0 as ProductsSuccess).entity.items!;
+          if ((state.productsStatusSort0 is ProductsSuccess && sort == 0) ||
+              (state.productsStatusSort1 is ProductsSuccess && sort == 1) ||
+              (state.productsStatusSort1 is ProductsSuccess && sort == 2) ||
+              (state.productsStatusSort1 is ProductsSuccess && sort == 3)) {
+            List<ProductsItems> productsItems =
+                sort == 0 ? (state.productsStatusSort0 as ProductsSuccess).entity.items! : (state.productsStatusSort1 as ProductsSuccess).entity.items!;
             return Padding(
               padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal),
               child: SizedBox(
@@ -139,5 +166,19 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
 
   void loadAll() {
     BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: sort));
+  }
+
+  void changeSort(int sort) {
+    BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: sort));
+    this.sort = sort;
+    if (sort == 0) {
+      appbarTitle = "جدیدترین ها";
+    } else if (sort == 1) {
+      appbarTitle = "پربازدیدترین ها";
+    } else if (sort == 2) {
+      appbarTitle = "گرانترین ها";
+    } else if (sort == 3) {
+      appbarTitle = "ارزانترین ها";
+    }
   }
 }

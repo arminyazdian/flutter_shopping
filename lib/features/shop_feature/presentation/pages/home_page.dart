@@ -162,7 +162,7 @@ class _HomePageState extends State<HomePage> {
                     Padding(
                       padding: const EdgeInsets.fromLTRB(Dimensions.mainPaddingHorizontal, Dimensions.mediumSpace, Dimensions.mainPaddingHorizontal, Dimensions.smallSpace),
                       child: HeaderRow(
-                          titleText: "پربازدید ها",
+                          titleText: "پربازدیدترین ها",
                           buttonText: "مشاهده همه",
                           buttonPress: () {
                             AutoRouter.of(context).push(ProductsViewPageRoute(sort: 1));
