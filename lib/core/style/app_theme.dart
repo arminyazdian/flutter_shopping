@@ -80,11 +80,16 @@ extension TextThemeExtension on BuildContext {
   TextStyle get headline5Bold => TextStyle(color: Theme.of(this).colorScheme.titleText, fontWeight: FontWeight.w700, fontSize: 20);
   TextStyle get title2Bold => TextStyle(color: Theme.of(this).colorScheme.mainText, fontWeight: FontWeight.w700, fontSize: 17);
   TextStyle get body1Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 16);
-  TextStyle get body2Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 15);
-  TextStyle get body2Bold => TextStyle(color: Theme.of(this).colorScheme.secondary, fontWeight: FontWeight.w700, fontSize: 15);
-  TextStyle get body3Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 14);
   TextStyle get body1Bold => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w700, fontSize: 16);
-  TextStyle get body4Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 13);
+  TextStyle get body2Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 15);
+  TextStyle get body2Bold => TextStyle(color: Theme.of(this).colorScheme.mainText, fontWeight: FontWeight.w700, fontSize: 15);
+  TextStyle get body3Medium => TextStyle(color: Theme.of(this).colorScheme.primary, fontWeight: FontWeight.w500, fontSize: 14);
+  TextStyle get body4Medium => TextStyle(
+      color: Theme.of(this).colorScheme.items,
+      fontWeight: FontWeight.w500,
+      fontSize: 13,
+      decoration: TextDecoration.lineThrough,
+      decorationColor: Theme.of(this).colorScheme.items);
 }
 
 extension ColorSchemeExtension on ColorScheme {
@@ -92,6 +97,7 @@ extension ColorSchemeExtension on ColorScheme {
   Color get primary => brightness == Brightness.light ? appColors.primary.light : appColors.primary.dark;
   Color get secondary => brightness == Brightness.light ? appColors.secondary.light : appColors.secondary.dark;
   Color get mainBackground1 => brightness == Brightness.light ? appColors.backgroundColor.light : appColors.backgroundColor.dark;
+  Color get items => brightness == Brightness.light ? appColors.items.light : appColors.items.dark;
   Color get mainText => brightness == Brightness.light ? appColors.mainTextColor.light : appColors.mainTextColor.dark;
   Color get subText => brightness == Brightness.light ? appColors.subTextColor.light : appColors.subTextColor.dark;
   Color get titleText => brightness == Brightness.light ? appColors.titleTextColor.light : appColors.titleTextColor.dark;

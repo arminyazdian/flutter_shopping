@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_shopping/core/resources/data_state.dart';
+import 'package:flutter_shopping/core/utils/consts.dart';
 import 'package:flutter_shopping/features/shop_feature/domain/repositories/banner_repository.dart';
 import 'package:flutter_shopping/features/shop_feature/domain/usecases/banner_usecase.dart';
 import 'package:flutter_shopping/features/shop_feature/domain/usecases/products_usecase.dart';
@@ -15,27 +16,51 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final ProductsUsecase productsUsecase;
   final BannerUsecase bannerUsecase;
 
-  HomeBloc(this.productsUsecase, this.bannerUsecase) : super(HomeState(productsStatus: ProductsLoading(), bannerStatus: BannerLoading())) {
+  HomeBloc(this.productsUsecase, this.bannerUsecase)
+      : super(HomeState(productsStatusSort0: ProductsLoading(), productsStatusSort1: ProductsLoading(), bannerStatus: BannerLoading())) {
     on<LoadProductsEvent>((event, emit) async {
-      emit(state.copyWith(newProductStatus: ProductsLoading()));
-
-      DataState productsDataState = await productsUsecase(event.sort);
-      if (DataState is DataSuccess) {
-        emit(state.copyWith(newProductStatus: ProductsSuccess(entity: productsDataState.data)));
+      if (event.sort == 0) {
+        emit(state.copyWith(newProductStatusSort0: ProductsLoading()));
+      } else if (event.sort == 1) {
+        emit(state.copyWith(newProductStatusSort1: ProductsLoading()));
       }
-      if (DataState is DataFail) {
-        emit(state.copyWith(newProductStatus: ProductsFail(error: productsDataState.error!)));
+      try {
+        DataState productsDataState = await productsUsecase(event.sort).timeout(Consts.timeout);
+        if (productsDataState is DataSuccess) {
+          if (event.sort == 0) {
+            emit(state.copyWith(newProductStatusSort0: ProductsSuccess(entity: productsDataState.data)));
+          } else if (event.sort == 1) {
+            emit(state.copyWith(newProductStatusSort1: ProductsSuccess(entity: productsDataState.data)));
+          }
+        }
+        if (productsDataState is DataFail) {
+          if (event.sort == 0) {
+            emit(state.copyWith(newProductStatusSort0: ProductsFail(error: productsDataState.error!)));
+          } else if (event.sort == 1) {
+            emit(state.copyWith(newProductStatusSort1: ProductsFail(error: productsDataState.error!)));
+          }
+        }
+      } catch (e) {
+        if (event.sort == 0) {
+          emit(state.copyWith(newProductStatusSort0: ProductsFail(error: e.toString())));
+        } else if (event.sort == 0) {
+          emit(state.copyWith(newProductStatusSort1: ProductsFail(error: e.toString())));
+        }
       }
     });
     on<LoadBannerEvent>((event, emit) async {
       emit(state.copyWith(newBannerStatus: BannerLoading()));
 
-      DataState bannerDataState = await bannerUsecase(NoParams());
-      if (DataState is DataSuccess) {
-        emit(state.copyWith(newBannerStatus: BannerSuccess(entity: bannerDataState.data)));
-      }
-      if (DataState is DataFail) {
-        emit(state.copyWith(newBannerStatus: BannerFail(error: bannerDataState.error!)));
+      try {
+        DataState bannerDataState = await bannerUsecase(NoParams()).timeout(Consts.timeout);
+        if (bannerDataState is DataSuccess) {
+          emit(state.copyWith(newBannerStatus: BannerSuccess(entity: bannerDataState.data)));
+        }
+        if (bannerDataState is DataFail) {
+          emit(state.copyWith(newBannerStatus: BannerFail(error: bannerDataState.error!)));
+        }
+      } catch (e) {
+        emit(state.copyWith(newBannerStatus: BannerFail(error: e.toString())));
       }
     });
   }

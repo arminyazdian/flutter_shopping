@@ -4,7 +4,8 @@ import 'package:flutter_shopping/core/config/dimensions.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AppBarTitle extends StatelessWidget {
-  const AppBarTitle({super.key});
+  final String text;
+  const AppBarTitle({super.key, required this.text});
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class AppBarTitle extends StatelessWidget {
               width: Dimensions.appBarIconSize,
             ),
             const SizedBox(width: 20),
-            const Text("نایک مارکت"),
+            Text(text),
           ],
         ),
         SvgPicture.asset(

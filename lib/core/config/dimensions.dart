@@ -3,4 +3,8 @@ class Dimensions {
   static const double mainPaddingHorizontal = 30;
   static const double mainPaddingVertical = 20;
   static const double textFieldPadding = 10;
+  static const double smallVerticalSpace = 5;
+  static const double mediumVerticalSpace = 10;
+  static const double bigVerticalSpace = 20;
+  static const double borderRadius = 10;
 }

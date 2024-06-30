@@ -1,11 +1,6 @@
-class ProductsEntity {
-  final int? id;
-  final String? title;
-  final int? price;
-  final int? discount;
-  final String? image;
-  final int? status;
-  final int? previousPrice;
+import 'package:flutter_shopping/features/shop_feature/data/models/products_model.dart';
 
-  ProductsEntity({required this.id, required this.title, required this.price, required this.discount, required this.image, required this.status, required this.previousPrice});
+class ProductsEntity {
+  final List<ProductsItems>? items;
+  ProductsEntity({required this.items});
 }

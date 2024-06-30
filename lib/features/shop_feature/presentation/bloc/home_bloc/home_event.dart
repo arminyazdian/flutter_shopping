@@ -1,10 +1,14 @@
 part of 'home_bloc.dart';
 
-class HomeEvent {}
+class HomeEvent {
+  const HomeEvent();
+}
 
 class LoadProductsEvent extends HomeEvent {
   final int sort;
   LoadProductsEvent({required this.sort});
 }
 
-class LoadBannerEvent extends HomeEvent {}
+class LoadBannerEvent extends HomeEvent {
+  const LoadBannerEvent();
+}

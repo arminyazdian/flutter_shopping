@@ -1,13 +1,6 @@
-class BannerEntity {
-  final int? id;
-  final String? image;
-  final int? linkType;
-  final int? linkValue;
+import 'package:flutter_shopping/features/shop_feature/data/models/banner_model.dart';
 
-  BannerEntity({
-    required this.id,
-    required this.image,
-    required this.linkType,
-    required this.linkValue,
-  });
+class BannerEntity {
+  final List<BannerItems>? items;
+  BannerEntity({required this.items});
 }
