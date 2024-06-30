@@ -106,65 +106,68 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
         },
         child: const Icon(AssetsBase.sortIcon),
       ),
-      body: BlocBuilder<HomeBloc, HomeState>(
-        builder: (context, state) {
-          if ((state.productsStatusSort0 is ProductsLoading && sort == 0) ||
-              (state.productsStatusSort1 is ProductsLoading && sort == 1) ||
-              (state.productsStatusSort1 is ProductsLoading && sort == 2) ||
-              (state.productsStatusSort1 is ProductsLoading && sort == 3)) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if ((state.productsStatusSort0 is ProductsFail && sort == 0) ||
-              (state.productsStatusSort1 is ProductsFail && sort == 1) ||
-              (state.productsStatusSort1 is ProductsFail && sort == 2) ||
-              (state.productsStatusSort1 is ProductsFail && sort == 3)) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text((state.productsStatusSort0 as ProductsFail).error, style: context.body1Bold),
-                  const MediumSpace(vertical: true),
-                  FilledButton(
-                    onPressed: () {
-                      loadAll();
-                    },
-                    child: const Text("بارگذاری مجدد"),
-                  ),
-                ],
-              ),
-            );
-          }
-          if ((state.productsStatusSort0 is ProductsSuccess && sort == 0) ||
-              (state.productsStatusSort1 is ProductsSuccess && sort == 1) ||
-              (state.productsStatusSort1 is ProductsSuccess && sort == 2) ||
-              (state.productsStatusSort1 is ProductsSuccess && sort == 3)) {
-            List<ProductsItems> productsItems =
-                sort == 0 ? (state.productsStatusSort0 as ProductsSuccess).entity.items! : (state.productsStatusSort1 as ProductsSuccess).entity.items!;
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal),
-              child: SizedBox(
-                child: ListView.builder(
-                  itemCount: productsItems.length,
-                  itemBuilder: (context, index) {
-                    int previousPrice = productsItems[index].price! + productsItems[index].discount!;
-                    return ProductsListItem(
-                      imagePath: productsItems[index].image!,
-                      productTitle: productsItems[index].title!,
-                      previousPrice: previousPrice,
-                      currentPrice: productsItems[index].price!,
-                    );
-                  },
+      body: RefreshIndicator(
+        onRefresh: () => loadAll(),
+        child: BlocBuilder<HomeBloc, HomeState>(
+          builder: (context, state) {
+            if ((state.productsStatusSort0 is ProductsLoading && sort == 0) ||
+                (state.productsStatusSort1 is ProductsLoading && sort == 1) ||
+                (state.productsStatusSort1 is ProductsLoading && sort == 2) ||
+                (state.productsStatusSort1 is ProductsLoading && sort == 3)) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if ((state.productsStatusSort0 is ProductsFail && sort == 0) ||
+                (state.productsStatusSort1 is ProductsFail && sort == 1) ||
+                (state.productsStatusSort1 is ProductsFail && sort == 2) ||
+                (state.productsStatusSort1 is ProductsFail && sort == 3)) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text((state.productsStatusSort0 as ProductsFail).error, style: context.body1Bold),
+                    const MediumSpace(vertical: true),
+                    FilledButton(
+                      onPressed: () {
+                        loadAll();
+                      },
+                      child: const Text("بارگذاری مجدد"),
+                    ),
+                  ],
                 ),
-              ),
-            );
-          }
-          return const Center();
-        },
+              );
+            }
+            if ((state.productsStatusSort0 is ProductsSuccess && sort == 0) ||
+                (state.productsStatusSort1 is ProductsSuccess && sort == 1) ||
+                (state.productsStatusSort1 is ProductsSuccess && sort == 2) ||
+                (state.productsStatusSort1 is ProductsSuccess && sort == 3)) {
+              List<ProductsItems> productsItems =
+                  sort == 0 ? (state.productsStatusSort0 as ProductsSuccess).entity.items! : (state.productsStatusSort1 as ProductsSuccess).entity.items!;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal),
+                child: SizedBox(
+                  child: ListView.builder(
+                    itemCount: productsItems.length,
+                    itemBuilder: (context, index) {
+                      int previousPrice = productsItems[index].price! + productsItems[index].discount!;
+                      return ProductsListItem(
+                        imagePath: productsItems[index].image!,
+                        productTitle: productsItems[index].title!,
+                        previousPrice: previousPrice,
+                        currentPrice: productsItems[index].price!,
+                      );
+                    },
+                  ),
+                ),
+              );
+            }
+            return const Center();
+          },
+        ),
       ),
     );
   }
 
-  void loadAll() {
+  Future<void> loadAll() async {
     BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: sort));
   }
 
