@@ -19,4 +19,6 @@ class AssetsBase {
   static const IconData favFilledIcon = Icons.favorite_rounded;
   static const IconData favOutlineIcon = Icons.favorite_outline_rounded;
   static const IconData searchIcon = Icons.search_rounded;
+  static const IconData closeIcon = Icons.close_rounded;
+  static const IconData addIcon = Icons.add_rounded;
 }

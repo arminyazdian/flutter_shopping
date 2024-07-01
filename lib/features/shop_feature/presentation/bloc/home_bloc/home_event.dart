@@ -12,3 +12,8 @@ class LoadProductsEvent extends HomeEvent {
 class LoadBannerEvent extends HomeEvent {
   const LoadBannerEvent();
 }
+
+class LoadCommentsEvent extends HomeEvent {
+  final int id;
+  const LoadCommentsEvent({required this.id});
+}

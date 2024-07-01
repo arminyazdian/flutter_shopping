@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
+import 'package:flutter_shopping/core/presentation/routes/app_router.dart';
 import 'package:flutter_shopping/core/presentation/widgets/big_space_widget.dart';
+import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/drag_indicator_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/medium_space.dart';
 import 'package:flutter_shopping/core/style/app_theme.dart';
@@ -37,8 +39,11 @@ class ProductsViewPage extends StatefulWidget implements AutoRouteWrapper {
 class _ProductsViewPageState extends State<ProductsViewPage> {
   String appbarTitle = "";
   int sort = 0;
+  bool isLoaded = false;
+
   @override
   void initState() {
+    isLoaded = false;
     sort = widget.sort;
     changeSort(sort);
     super.initState();
@@ -50,62 +55,68 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
       appBar: AppBar(
         title: Text(appbarTitle),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            enableDrag: true,
-            context: context,
-            builder: (context) {
-              return Directionality(
-                textDirection: TextDirection.rtl,
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    const MediumSpace(vertical: true),
-                    const DragIndicator(),
-                    const MediumSpace(vertical: true),
-                    Text("مرتب سازی بر اساس", textAlign: TextAlign.center, style: context.body2Bold),
-                    const BigSpace(vertical: true),
-                    BottomSheetTile(
-                      title: "جدیدترین",
-                      onTap: () => setState(() {
-                        changeSort(0);
-                        Navigator.pop(context);
-                      }),
-                      sortState: sort == 0,
-                    ),
-                    BottomSheetTile(
-                      title: "پربازدیدترین",
-                      onTap: () => setState(() {
-                        changeSort(1);
-                        Navigator.pop(context);
-                      }),
-                      sortState: sort == 1,
-                    ),
-                    BottomSheetTile(
-                      title: "گرانترین",
-                      onTap: () => setState(() {
-                        changeSort(2);
-                        Navigator.pop(context);
-                      }),
-                      sortState: sort == 2,
-                    ),
-                    BottomSheetTile(
-                      title: "ارزانترین",
-                      onTap: () => setState(() {
-                        changeSort(3);
-                        Navigator.pop(context);
-                      }),
-                      sortState: sort == 3,
-                    ),
-                  ],
-                ),
-              );
-            },
-          );
-        },
-        child: const Icon(AssetsBase.sortIcon),
-      ),
+      floatingActionButton: isLoaded
+          ? FloatingActionButton(
+              onPressed: () {
+                showModalBottomSheet(
+                  enableDrag: true,
+                  context: context,
+                  builder: (context) {
+                    return Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          const MediumSpace(vertical: true),
+                          const DragIndicator(),
+                          const MediumSpace(vertical: true),
+                          Text("مرتب سازی بر اساس", textAlign: TextAlign.center, style: context.body2Bold),
+                          const BigSpace(vertical: true),
+                          BottomSheetTile(
+                            title: "جدیدترین",
+                            onTap: () => setState(() {
+                              changeSort(0);
+                              Navigator.pop(context);
+                              isLoaded = false;
+                            }),
+                            sortState: sort == 0,
+                          ),
+                          BottomSheetTile(
+                            title: "پربازدیدترین",
+                            onTap: () => setState(() {
+                              changeSort(1);
+                              Navigator.pop(context);
+                              isLoaded = false;
+                            }),
+                            sortState: sort == 1,
+                          ),
+                          BottomSheetTile(
+                            title: "گرانترین",
+                            onTap: () => setState(() {
+                              changeSort(2);
+                              Navigator.pop(context);
+                              isLoaded = false;
+                            }),
+                            sortState: sort == 2,
+                          ),
+                          BottomSheetTile(
+                            title: "ارزانترین",
+                            onTap: () => setState(() {
+                              changeSort(3);
+                              Navigator.pop(context);
+                              isLoaded = false;
+                            }),
+                            sortState: sort == 3,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              },
+              child: const Icon(AssetsBase.sortIcon),
+            )
+          : null,
       body: RefreshIndicator(
         onRefresh: () => loadAll(),
         child: BlocBuilder<HomeBloc, HomeState>(
@@ -120,28 +131,25 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
                 (state.productsStatusSort1 is ProductsFail && sort == 1) ||
                 (state.productsStatusSort1 is ProductsFail && sort == 2) ||
                 (state.productsStatusSort1 is ProductsFail && sort == 3)) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text((state.productsStatusSort0 as ProductsFail).error, style: context.body1Bold),
-                    const MediumSpace(vertical: true),
-                    FilledButton(
-                      onPressed: () {
-                        loadAll();
-                      },
-                      child: const Text("بارگذاری مجدد"),
-                    ),
-                  ],
-                ),
-              );
+              if (sort == 0) {
+                return BlocError(error: (state.productsStatusSort0 as ProductsFail).error, onPress: () => loadAll());
+              } else {
+                return BlocError(error: (state.productsStatusSort1 as ProductsFail).error, onPress: () => loadAll());
+              }
             }
             if ((state.productsStatusSort0 is ProductsSuccess && sort == 0) ||
                 (state.productsStatusSort1 is ProductsSuccess && sort == 1) ||
                 (state.productsStatusSort1 is ProductsSuccess && sort == 2) ||
                 (state.productsStatusSort1 is ProductsSuccess && sort == 3)) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+                  isLoaded = true;
+                });
+              });
+
               List<ProductsItems> productsItems =
                   sort == 0 ? (state.productsStatusSort0 as ProductsSuccess).entity.items! : (state.productsStatusSort1 as ProductsSuccess).entity.items!;
+
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal),
                 child: SizedBox(
@@ -154,6 +162,9 @@ class _ProductsViewPageState extends State<ProductsViewPage> {
                         productTitle: productsItems[index].title!,
                         previousPrice: previousPrice,
                         currentPrice: productsItems[index].price!,
+                        onTap: () {
+                          AutoRouter.of(context).push(ProductPageRoute(id: productsItems[index].id!));
+                        },
                       );
                     },
                   ),

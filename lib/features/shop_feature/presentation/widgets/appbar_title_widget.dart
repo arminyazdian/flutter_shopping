@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
+import 'package:flutter_shopping/core/presentation/widgets/big_space_widget.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 class AppBarTitle extends StatelessWidget {
@@ -18,7 +19,7 @@ class AppBarTitle extends StatelessWidget {
               AssetsBase().mainLogo,
               width: Dimensions.appBarIconSize,
             ),
-            const SizedBox(width: 20),
+            const BigSpace(vertical: false),
             Text(text),
           ],
         ),

@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_shopping/features/shop_feature/presentation/pages/custom_products_page.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/pages/home_page.dart';
+import 'package:flutter_shopping/features/shop_feature/presentation/pages/product_page.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/pages/products_view_page.dart';
 import 'package:injectable/injectable.dart';
 part 'app_router.gr.dart';
@@ -17,5 +19,7 @@ class AppRouter extends _$AppRouter {
   final List<AutoRoute> routes = [
     AutoRoute(page: HomePageRoute.page, initial: true),
     AutoRoute(page: ProductsViewPageRoute.page),
+    AutoRoute(page: CustomProductsRoute.page),
+    AutoRoute(page: ProductPageRoute.page)
   ];
 }

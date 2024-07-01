@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
 import 'package:flutter_shopping/core/presentation/routes/app_router.dart';
+import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dart';
+import 'package:flutter_shopping/core/presentation/widgets/bottom_navigation_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/network_image_progressbar_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/big_space_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/medium_space.dart';
@@ -19,6 +21,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/banner_slide_widget.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/header_row_widget.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/products_card_widget.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
 
 @RoutePage()
 class HomePage extends StatefulWidget implements AutoRouteWrapper {
@@ -40,10 +43,21 @@ class HomePage extends StatefulWidget implements AutoRouteWrapper {
 }
 
 class _HomePageState extends State<HomePage> {
+  final TextEditingController searchController = TextEditingController();
+
   @override
   void initState() {
     loadAll();
+    searchController.addListener(() {
+      setState(() {});
+    });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    searchController.dispose();
+    super.dispose();
   }
 
   @override
@@ -52,17 +66,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const AppBarTitle(text: "نایک مارکت"),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: 0,
-        type: BottomNavigationBarType.fixed,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(AssetsBase.homeIcon), label: "خانه"),
-          BottomNavigationBarItem(icon: Icon(AssetsBase.shoppingIcon), label: "سبد خرید"),
-          BottomNavigationBarItem(icon: Icon(AssetsBase.favFilledIcon), label: "علاقه مندی ها"),
-          BottomNavigationBarItem(icon: Icon(AssetsBase.settingsIcon), label: "تنظیمات"),
-        ],
-        onTap: (value) {},
-      ),
+      bottomNavigationBar: const BottomNavigation(),
       body: RefreshIndicator(
         onRefresh: () => loadAll(),
         child: BlocBuilder<HomeBloc, HomeState>(
@@ -71,26 +75,13 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: CircularProgressIndicator());
             }
             if (state.productsStatusSort0 is ProductsFail || state.bannerStatus is BannerFail || state.productsStatusSort1 is ProductsFail) {
-              return Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text((state.productsStatusSort0 as ProductsFail).error, style: context.body1Bold),
-                    const MediumSpace(vertical: true),
-                    FilledButton(
-                      onPressed: () {
-                        loadAll();
-                      },
-                      child: const Text("بارگذاری مجدد"),
-                    ),
-                  ],
-                ),
-              );
+              return BlocError(error: (state.productsStatusSort0 as ProductsFail).error, onPress: () => loadAll());
             }
             if (state.bannerStatus is BannerSuccess && state.productsStatusSort0 is ProductsSuccess && state.productsStatusSort1 is ProductsSuccess) {
               List<BannerItems> bannerItems = (state.bannerStatus as BannerSuccess).entity.items!;
               List<ProductsItems> productsItemsSort0 = (state.productsStatusSort0 as ProductsSuccess).entity.items!;
               List<ProductsItems> productsItemsSort1 = (state.productsStatusSort1 as ProductsSuccess).entity.items!;
+              List<ProductsItems> productsSearchFilter = productsItemsSort0;
 
               return SingleChildScrollView(
                 child: Column(
@@ -99,36 +90,66 @@ class _HomePageState extends State<HomePage> {
                       padding: const EdgeInsets.fromLTRB(Dimensions.mainPaddingHorizontal, Dimensions.mainPaddingVertical, Dimensions.mainPaddingHorizontal, 0),
                       child: Column(
                         children: [
-                          const TextField(
-                            maxLines: 1,
-                            decoration: InputDecoration(
-                              hintText: "جستجو...",
-                              prefixIcon: Icon(AssetsBase.searchIcon),
-                              border: OutlineInputBorder(),
-                              contentPadding: EdgeInsets.all(Dimensions.textFieldPadding),
+                          TypeAheadField(
+                            noItemsFoundBuilder: (context) => const ListTile(title: Text("موردی پیدا نشد", textDirection: TextDirection.rtl)),
+                            textFieldConfiguration: TextFieldConfiguration(
+                              controller: searchController,
+                              decoration: InputDecoration(
+                                hintText: "جستجو...",
+                                prefixIcon: const Icon(AssetsBase.searchIcon),
+                                suffixIcon: searchController.text == ""
+                                    ? null
+                                    : IconButton(
+                                        onPressed: () {
+                                          searchController.text = "";
+                                        },
+                                        icon: Icon(AssetsBase.closeIcon, color: Theme.of(context).primaryColor),
+                                      ),
+                                border: const OutlineInputBorder(),
+                                contentPadding: const EdgeInsets.all(Dimensions.textFieldPadding),
+                              ),
                             ),
+                            suggestionsCallback: (suggest) {
+                              return productsSearchFilter.where((product) => product.title!.toLowerCase().contains(suggest.toLowerCase()));
+                            },
+                            itemBuilder: (context, itemData) {
+                              return Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: ListTile(
+                                  title: Text(itemData.title!),
+                                  subtitle: Text("${itemData.price!} تومان"),
+                                  leading: Image.network(itemData.image!),
+                                ),
+                              );
+                            },
+                            onSuggestionSelected: (suggestion) {
+                              AutoRouter.of(context).push(ProductPageRoute(id: suggestion.id!));
+                            },
                           ),
                           const BigSpace(vertical: true),
                           BannerSlide(
                             itemCount: bannerItems.length,
                             itemBuilder: (context, index, realIndex) {
-                              return Image.network(
-                                bannerItems[index].image!,
-                                fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    color: Theme.of(context).colorScheme.items,
-                                    height: 500,
-                                    width: double.infinity,
-                                    child: const Center(
-                                      child: Text("خطا در دریافت تصویر"),
-                                    ),
-                                  );
-                                },
-                                loadingBuilder: (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return const NetworkImageProgressbar(height: 500, width: double.infinity);
-                                },
+                              return GestureDetector(
+                                onTap: () => AutoRouter.of(context).push(CustomProductsRoute(productId: bannerItems[index].id!)),
+                                child: Image.network(
+                                  bannerItems[index].image!,
+                                  fit: BoxFit.fill,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      color: Theme.of(context).colorScheme.items,
+                                      height: 500,
+                                      width: double.infinity,
+                                      child: const Center(
+                                        child: Text("خطا در دریافت تصویر"),
+                                      ),
+                                    );
+                                  },
+                                  loadingBuilder: (context, child, loadingProgress) {
+                                    if (loadingProgress == null) return child;
+                                    return const NetworkImageProgressbar(height: 500, width: double.infinity);
+                                  },
+                                ),
                               );
                             },
                           ),
@@ -155,6 +176,9 @@ class _HomePageState extends State<HomePage> {
                             productTitle: productsItemsSort0[index].title!,
                             previousPrice: previousPrice,
                             currentPrice: productsItemsSort0[index].price!,
+                            onTap: () {
+                              AutoRouter.of(context).push(ProductPageRoute(id: productsItemsSort0[index].id!));
+                            },
                           );
                         },
                       ),
@@ -180,6 +204,9 @@ class _HomePageState extends State<HomePage> {
                             productTitle: productsItemsSort1[index].title!,
                             previousPrice: previousPrice,
                             currentPrice: productsItemsSort1[index].price!,
+                            onTap: () {
+                              AutoRouter.of(context).push(ProductPageRoute(id: productsItemsSort1[index].id!));
+                            },
                           );
                         },
                       ),
@@ -195,7 +222,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  loadAll() async {
+  Future<void> loadAll() async {
     BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 0));
     BlocProvider.of<HomeBloc>(context).add(const LoadBannerEvent());
     BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 1));

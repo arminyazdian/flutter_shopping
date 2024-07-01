@@ -33,8 +33,8 @@ class AppTheme {
         foregroundColor: appColors.backgroundColor.light,
       ),
       textTheme: Theme.of(context).textTheme.copyWith(
-            headlineMedium: context.headline4Bold,
-            headlineSmall: context.headline5Bold,
+            headlineMedium: context.headline1Bold,
+            headlineSmall: context.headline2Bold,
             titleLarge: context.title2Bold,
             bodyLarge: context.body1Medium,
             bodyMedium: context.body2Medium,
@@ -69,8 +69,8 @@ class AppTheme {
         foregroundColor: appColors.backgroundColor.dark,
       ),
       textTheme: Theme.of(context).textTheme.copyWith(
-            headlineMedium: context.headline4Bold,
-            headlineSmall: context.headline5Bold,
+            headlineMedium: context.headline1Bold,
+            headlineSmall: context.headline2Bold,
             titleLarge: context.title2Bold,
             bodyLarge: context.body1Medium,
             bodyMedium: context.body2Medium,
@@ -84,8 +84,8 @@ class AppTheme {
 }
 
 extension TextThemeExtension on BuildContext {
-  TextStyle get headline4Bold => TextStyle(color: Theme.of(this).colorScheme.titleText, fontWeight: FontWeight.w700, fontSize: 22);
-  TextStyle get headline5Bold => TextStyle(color: Theme.of(this).colorScheme.titleText, fontWeight: FontWeight.w700, fontSize: 20);
+  TextStyle get headline1Bold => TextStyle(color: Theme.of(this).colorScheme.titleText, fontWeight: FontWeight.w700, fontSize: 20);
+  TextStyle get headline2Bold => TextStyle(color: Theme.of(this).colorScheme.titleText, fontWeight: FontWeight.w700, fontSize: 18);
   TextStyle get title2Bold => TextStyle(color: Theme.of(this).colorScheme.mainText, fontWeight: FontWeight.w700, fontSize: 17);
   TextStyle get body1Medium => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w500, fontSize: 16);
   TextStyle get body1Bold => TextStyle(color: Theme.of(this).colorScheme.subText, fontWeight: FontWeight.w700, fontSize: 16);

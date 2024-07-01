@@ -11,10 +11,10 @@ class HeaderRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(titleText, style: context.body2Medium),
+        Text(titleText, style: context.body2Bold),
         TextButton(
           onPressed: buttonPress,
-          child: Text(buttonText, style: context.body2Medium.copyWith(color: Theme.of(context).primaryColor)),
+          child: Text(buttonText, style: context.body2Bold.copyWith(color: Theme.of(context).primaryColor)),
         ),
       ],
     );
