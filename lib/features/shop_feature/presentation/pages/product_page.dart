@@ -3,20 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
-import 'package:flutter_shopping/core/presentation/widgets/big_space_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dart';
-import 'package:flutter_shopping/core/presentation/widgets/bottom_navigation_widget.dart';
-import 'package:flutter_shopping/core/presentation/widgets/medium_space.dart';
-import 'package:flutter_shopping/core/presentation/widgets/network_image_progressbar_widget.dart';
-import 'package:flutter_shopping/core/style/app_theme.dart';
-import 'package:flutter_shopping/core/utils/consts.dart';
 import 'package:flutter_shopping/dependency_injection/injection.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/comments_model.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/products_model.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/comments_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/home_bloc.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/products_status.dart';
+import 'package:flutter_shopping/features/shop_feature/presentation/widgets/comment_item_widget.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/header_row_widget.dart';
+import 'package:flutter_shopping/features/shop_feature/presentation/widgets/product_full_widget.dart';
 
 @RoutePage()
 class ProductPage extends StatefulWidget implements AutoRouteWrapper {
@@ -87,120 +83,23 @@ class _ProductPageState extends State<ProductPage> {
                   padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal),
                   child: Column(
                     children: [
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(Dimensions.borderRadius),
-                        child: Image.network(
-                          productsItems.image!,
-                          fit: BoxFit.cover,
-                          height: 250,
-                          width: double.infinity,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              color: Theme.of(context).colorScheme.items,
-                              height: 500,
-                              width: double.infinity,
-                              child: const Center(
-                                child: Text("خطا در دریافت تصویر"),
-                              ),
-                            );
-                          },
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return const NetworkImageProgressbar(height: 500, width: double.infinity);
-                          },
-                        ),
+                      ProductFull(
+                        imagePath: productsItems.image!,
+                        title: productsItems.title!,
+                        previousPrice: previousPrice,
+                        price: productsItems.price!,
                       ),
-                      const MediumSpace(vertical: true),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          productsItems.title!,
-                          style: context.headline2Bold,
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.fade,
-                          maxLines: 2,
-                        ),
-                      ),
-                      const BigSpace(vertical: true),
-                      Text(
-                        Consts.sampleDescription,
-                        style: context.body2Medium.copyWith(height: 1.8),
-                        textAlign: TextAlign.justify,
-                      ),
-                      const BigSpace(vertical: true),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          "$previousPrice تومان",
-                          style: context.body4Medium,
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      SizedBox(
-                        width: double.infinity,
-                        child: Text(
-                          "${productsItems.price} تومان",
-                          style: context.body1Bold.copyWith(color: Theme.of(context).primaryColor),
-                          textAlign: TextAlign.right,
-                        ),
-                      ),
-                      const MediumSpace(vertical: true),
                       HeaderRow(titleText: "${commentsItems.length} دیدگاه", buttonText: "+ افزودن نظر", buttonPress: () {}),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: commentsItems.length,
                         itemBuilder: (context, index) {
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: Dimensions.mainPaddingHorizontal / 2, vertical: Dimensions.mediumSpace),
-                            child: SizedBox(
-                              //  color: Colors.red,
-                              width: double.infinity,
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          commentsItems[index].title!,
-                                          style: context.body2Bold,
-                                          overflow: TextOverflow.fade,
-                                        ),
-                                      ),
-                                      Column(
-                                        children: [
-                                          Text(
-                                            commentsItems[index].date!,
-                                            style: context.body4Medium.copyWith(decoration: TextDecoration.none),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Text(
-                                      commentsItems[index].author!.email!,
-                                      textAlign: TextAlign.left,
-                                      style: context.body4Medium.copyWith(decoration: TextDecoration.none),
-                                    ),
-                                  ),
-                                  const MediumSpace(vertical: true),
-                                  SizedBox(
-                                    width: double.infinity,
-                                    child: Text(
-                                      commentsItems[index].content!,
-                                      style: context.body2Medium.copyWith(height: 1.8),
-                                      textAlign: TextAlign.justify,
-                                    ),
-                                  ),
-                                  const MediumSpace(vertical: true),
-                                  const Divider(),
-                                ],
-                              ),
-                            ),
+                          return CommentItem(
+                            title: commentsItems[index].title!,
+                            date: commentsItems[index].date!,
+                            email: commentsItems[index].author!.email!,
+                            content: commentsItems[index].content!,
                           );
                         },
                       ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/style/app_color.dart';
-import 'package:injectable/src/injectable_annotations.dart';
+import 'package:injectable/injectable.dart';
 
 @injectable
 class AppTheme {
@@ -17,7 +17,6 @@ class AppTheme {
       brightness: Brightness.light,
       primaryColor: appColors.primary.light,
       scaffoldBackgroundColor: appColors.backgroundColor.light,
-      backgroundColor: appColors.backgroundColor.light,
       fontFamily: AssetsBase.fontFamily,
       colorScheme: defaultTheme.colorScheme.copyWith(primary: appColors.primary.light, secondary: appColors.secondary.light),
       appBarTheme: AppBarTheme(backgroundColor: appColors.backgroundColor.light),
@@ -53,7 +52,6 @@ class AppTheme {
       brightness: Brightness.dark,
       primaryColor: appColors.primary.dark,
       scaffoldBackgroundColor: appColors.backgroundColor.dark,
-      backgroundColor: appColors.backgroundColor.dark,
       fontFamily: AssetsBase.fontFamily,
       colorScheme: defaultTheme.colorScheme.copyWith(primary: appColors.primary.dark, secondary: appColors.secondary.dark),
       appBarTheme: AppBarTheme(backgroundColor: appColors.backgroundColor.dark),

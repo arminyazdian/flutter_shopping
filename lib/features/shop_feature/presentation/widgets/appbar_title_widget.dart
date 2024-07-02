@@ -26,6 +26,7 @@ class AppBarTitle extends StatelessWidget {
         SvgPicture.asset(
           AssetsBase().profile,
           width: Dimensions.appBarIconSize,
+          // ignore: deprecated_member_use
           color: Theme.of(context).primaryColor,
         ),
       ],
