@@ -7,7 +7,6 @@ import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dar
 import 'package:flutter_shopping/dependency_injection/injection.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/products_model.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/home_bloc.dart';
-import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/products_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/products_list_item_widget.dart';
 
 @RoutePage()
@@ -50,14 +49,14 @@ class _CustomProductsState extends State<CustomProducts> {
         onRefresh: () => loadAll(),
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if (state.productsStatusSort0 is ProductsLoading) {
+            if (state.productsSort0Status.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state.productsStatusSort0 is ProductsFail) {
-              return BlocError(error: (state.productsStatusSort0 as ProductsFail).error, onPress: () => loadAll());
+            if (state.productsSort0Status.isFailure) {
+              return BlocError(error: state.productsSort0Error!, onPress: () => loadAll());
             }
-            if (state.productsStatusSort0 is ProductsSuccess) {
-              List<ProductsItems> productsItems = (state.productsStatusSort0 as ProductsSuccess).entity.items!;
+            if (state.productsSort0Status.isSuccess) {
+              List<ProductsItems> productsItems = state.productsSort0Entity!.items!;
               productsItems.removeWhere((product) => !product.title!.contains(textContaining));
 
               return Padding(
@@ -89,7 +88,7 @@ class _CustomProductsState extends State<CustomProducts> {
   }
 
   Future<void> loadAll() async {
-    BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 0));
+    BlocProvider.of<HomeBloc>(context).add(const HomeEvent.loadProducts(sort: 0));
   }
 
   void initLoad() {

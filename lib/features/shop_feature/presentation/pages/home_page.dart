@@ -4,18 +4,14 @@ import 'package:flutter_shopping/core/config/assets.dart';
 import 'package:flutter_shopping/core/config/dimensions.dart';
 import 'package:flutter_shopping/core/presentation/routes/app_router.dart';
 import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dart';
-import 'package:flutter_shopping/core/presentation/widgets/bottom_navigation_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/network_image_progressbar_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/big_space_widget.dart';
 import 'package:flutter_shopping/core/presentation/widgets/medium_space.dart';
 import 'package:flutter_shopping/core/presentation/widgets/small_space_widget.dart';
 import 'package:flutter_shopping/core/style/app_theme.dart';
-import 'package:flutter_shopping/dependency_injection/injection.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/banner_model.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/products_model.dart';
-import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/banner_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/home_bloc.dart';
-import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/products_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/appbar_title_widget.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/banner_slide_widget.dart';
@@ -34,15 +30,12 @@ class HomePage extends StatefulWidget implements AutoRouteWrapper {
   Widget wrappedRoute(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
-      child: BlocProvider(
-        create: (context) => inject<HomeBloc>(),
-        child: this,
-      ),
+      child: this,
     );
   }
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with AutomaticKeepAliveClientMixin {
   final TextEditingController searchController = TextEditingController();
 
   @override
@@ -61,26 +54,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       appBar: AppBar(
         title: const AppBarTitle(text: "نایک مارکت"),
       ),
-      bottomNavigationBar: const BottomNavigation(),
       body: RefreshIndicator(
         onRefresh: () => loadAll(),
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if (state.bannerStatus is BannerLoading || state.productsStatusSort0 is ProductsLoading || state.productsStatusSort1 is ProductsLoading) {
+            if (state.bannerStatus.isLoading || state.productsSort0Status.isLoading || state.productsSort1Status.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state.productsStatusSort0 is ProductsFail || state.bannerStatus is BannerFail || state.productsStatusSort1 is ProductsFail) {
-              return BlocError(error: (state.productsStatusSort0 as ProductsFail).error, onPress: () => loadAll());
+            if (state.productsSort0Status.isFailure || state.productsSort1Status.isFailure || state.bannerStatus.isFailure) {
+              return BlocError(error: state.productsSort0Error ?? state.productsSort1Error ?? state.bannerError!, onPress: () => loadAll());
             }
-            if (state.bannerStatus is BannerSuccess && state.productsStatusSort0 is ProductsSuccess && state.productsStatusSort1 is ProductsSuccess) {
-              List<BannerItems> bannerItems = (state.bannerStatus as BannerSuccess).entity.items!;
-              List<ProductsItems> productsItemsSort0 = (state.productsStatusSort0 as ProductsSuccess).entity.items!;
-              List<ProductsItems> productsItemsSort1 = (state.productsStatusSort1 as ProductsSuccess).entity.items!;
+            if (state.productsSort0Status.isSuccess && state.productsSort1Status.isSuccess && state.bannerStatus.isSuccess) {
+              List<BannerItems> bannerItems = state.bannerEntity!.items!;
+              List<ProductsItems> productsItemsSort0 = state.productsSort0Entity!.items!;
+              List<ProductsItems> productsItemsSort1 = state.productsSort1Entity!.items!;
               List<ProductsItems> productsSearchFilter = productsItemsSort0;
 
               return SingleChildScrollView(
@@ -223,8 +219,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> loadAll() async {
-    BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 0));
-    BlocProvider.of<HomeBloc>(context).add(const LoadBannerEvent());
-    BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 1));
+    BlocProvider.of<HomeBloc>(context).add(const HomeEvent.loadProducts(sort: 0));
+    BlocProvider.of<HomeBloc>(context).add(const HomeEvent.loadProducts(sort: 1));
+    BlocProvider.of<HomeBloc>(context).add(const HomeEvent.loadBanner());
   }
 }

@@ -7,9 +7,7 @@ import 'package:flutter_shopping/core/presentation/widgets/bloc_error_widget.dar
 import 'package:flutter_shopping/dependency_injection/injection.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/comments_model.dart';
 import 'package:flutter_shopping/features/shop_feature/data/models/products_model.dart';
-import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/comments_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/home_bloc.dart';
-import 'package:flutter_shopping/features/shop_feature/presentation/bloc/home_bloc/products_status.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/comment_item_widget.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/header_row_widget.dart';
 import 'package:flutter_shopping/features/shop_feature/presentation/widgets/product_full_widget.dart';
@@ -67,15 +65,15 @@ class _ProductPageState extends State<ProductPage> {
         onRefresh: () => loadAll(),
         child: BlocBuilder<HomeBloc, HomeState>(
           builder: (context, state) {
-            if (state.productsStatusSort0 is ProductsLoading || state.commentsStatus is CommentsLoading) {
+            if (state.productsSort0Status.isLoading || state.commentsStatus.isLoading) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (state.productsStatusSort0 is ProductsFail || state.commentsStatus is CommentsFail) {
-              return BlocError(error: (state.commentsStatus as CommentsFail).error, onPress: () => loadAll());
+            if (state.productsSort0Status.isFailure || state.commentsStatus.isFailure) {
+              return BlocError(error: state.commentsError!, onPress: () => loadAll());
             }
-            if (state.productsStatusSort0 is ProductsSuccess && state.commentsStatus is CommentsSuccess) {
-              ProductsItems productsItems = (state.productsStatusSort0 as ProductsSuccess).entity.items!.firstWhere((product) => product.id == id);
-              List<CommentsItems> commentsItems = (state.commentsStatus as CommentsSuccess).entity.items!;
+            if (state.productsSort0Status.isSuccess && state.commentsStatus.isSuccess) {
+              ProductsItems productsItems = state.productsSort0Entity!.items!.firstWhere((product) => product.id == id);
+              List<CommentsItems> commentsItems = state.commentsEntity!.items!;
               int previousPrice = productsItems.price! + productsItems.discount!;
 
               return SingleChildScrollView(
@@ -116,7 +114,7 @@ class _ProductPageState extends State<ProductPage> {
   }
 
   Future<void> loadAll() async {
-    BlocProvider.of<HomeBloc>(context).add(LoadProductsEvent(sort: 0));
-    BlocProvider.of<HomeBloc>(context).add(LoadCommentsEvent(id: id));
+    BlocProvider.of<HomeBloc>(context).add(const HomeEvent.loadProducts(sort: 0));
+    BlocProvider.of<HomeBloc>(context).add(HomeEvent.loadComments(id: id));
   }
 }
